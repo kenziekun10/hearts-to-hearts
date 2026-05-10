@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hearts to Hearts | Luxury Personal Vows</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root { --ps-blue: #0072ce; --ps-dark: #000000; --heart-pink: #ff0055; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; color: white; overflow-x: hidden; }
+        .romantic { font-family: 'Dancing Script', cursive; }
+        .hidden-section { display: none !important; }
+
+        /* PS5 Dynamic Background */
+        .ps-gradient {
+            position: fixed; inset: 0; z-index: -2;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 0, 85, 0.12) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(0, 114, 206, 0.08) 0%, transparent 40%),
+                        #050505;
+        }
+
+        /* Responsive Card Strategy */
+        .glass-premium {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-premium:hover { 
+            background: rgba(255, 255, 255, 0.05); 
+            border-color: var(--heart-pink);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .ps-btn {
+            background: white; color: black; border-radius: 50px;
+            font-weight: 800; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .ps-btn:hover { transform: scale(1.08); background: var(--heart-pink); color: white; box-shadow: 0 0 20px rgba(255,0,85,0.4); }
+
+        /* Adaptive Envelope Positioning */
+        .env-scene { height: 400px; display: flex; align-items: flex-end; justify-content: center; width: 100%; position: relative; }
+        .env-wrapper { position: relative; width: 320px; height: 210px; cursor: pointer; z-index: 10; transition: 0.5s; }
+        .env-base { position: absolute; bottom: 0; width: 100%; height: 100%; background: var(--heart-pink); border-radius: 0 0 12px 12px; z-index: 5; }
+        .env-flap { 
+            position: absolute; top: 0; width: 100%; height: 100%; background: #d60048; 
+            clip-path: polygon(0 0, 50% 65%, 100% 0); transform-origin: top; transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1); z-index: 11;
+        }
+
+        .letter { 
+            position: absolute; left: 50%; bottom: 5%; transform: translateX(-50%);
+            width: 90%; height: 85%; background: #fff; border-radius: 8px; z-index: 2; 
+            transition: 1.2s cubic-bezier(0.19, 1, 0.22, 1); padding: 25px; color: #111; opacity: 0;
+        }
+
+        .env-open .env-flap { transform: rotateX(180deg); z-index: 1; }
+        
+        /* Auto-Detect Adjustment: Mobile vs Desktop */
+        @media (max-width: 768px) {
+            .env-open .letter { transform: translate(-50%, -200px); height: 480px; width: 95vw; opacity: 1; z-index: 50; }
+        }
+        @media (min-width: 769px) {
+            .env-open .letter { transform: translate(-50%, -260px); height: 540px; width: 400px; opacity: 1; z-index: 50; }
+        }
+
+        .input-premium {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 20px; width: 100%; outline: none; transition: 0.3s;
+        }
+        .input-premium:focus { border-color: var(--heart-pink); background: rgba(255,255,255,0.06); }
+        
+        #device-indicator { font-[10px] font-bold text-slate-500 uppercase tracking-widest fixed bottom-4 right-8 opacity-30; }
+    </style>
+</head>
+<body>
+    <div class="ps-gradient"></div>
+    <div id="device-indicator">System: Detecting...</div>
+
+    <nav class="fixed top-0 w-full p-6 md:p-10 flex justify-between items-center z-50">
+        <div class="text-xl md:text-2xl font-black tracking-tighter">HEARTS<span class="text-[#ff0055]">TOHEARTS.</span></div>
+        <div class="hidden md:block px-5 py-2 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.3em] bg-white/5">Enterprise V13</div>
+    </nav>
+
+    <section id="landing" class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <div data-aos="zoom-out" data-aos-duration="2000">
+            <h1 class="text-5xl md:text-[110px] font-black mb-8 leading-[0.9] tracking-tighter">
+                REDEFINING <br><span class="romantic text-[#ff0055]">Intimacy.</span>
+            </h1>
+            <p class="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto mb-12 font-medium">Platform eksklusif untuk menyampaikan pesan bermakna dengan interface kelas dunia.</p>
+            <button onclick="nav('dashboard')" class="ps-btn px-16 py-5 text-xs uppercase tracking-widest">Inisiasi Sesi</button>
+        </div>
+    </section>
+
+    <section id="dashboard" class="hidden-section min-h-screen p-6 pt-32">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16">
+                <h2 class="text-4xl font-black mb-2 tracking-tight">EXPERIENCE <span class="text-[#ff0055]">HUB.</span></h2>
+                <p class="text-slate-500 font-medium">Pilih jenis interaksi yang ingin kamu bangun.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div onclick="initEditor('confess')" class="glass-premium p-10 cursor-pointer group relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-pink-500 group-hover:text-white transition-all duration-500 text-3xl">💖</div>
+                        <h3 class="text-2xl font-bold mb-4 uppercase tracking-tight">Engagement Module</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8">Tujuan: Menembak atau melamar seseorang secara interaktif. Dilengkapi sistem anti-tolak (Dodge Button) untuk hasil yang lebih pasti.</p>
+                        <span class="text-[10px] font-black text-pink-500 tracking-[0.3em] uppercase">Configure Engine &rarr;</span>
+                    </div>
+                </div>
+
+                <div onclick="initEditor('letter')" class="glass-premium p-10 cursor-pointer group relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 text-3xl">✉️</div>
+                        <h3 class="text-2xl font-bold mb-4 uppercase tracking-tight">Vows Archive</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8">Tujuan: Menyampaikan surat panjang, ucapan terima kasih, atau anniversary. Fokus pada kenyamanan membaca dan estetika premium.</p>
+                        <span class="text-[10px] font-black text-pink-500 tracking-[0.3em] uppercase">Draft Letter &rarr;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="editor" class="hidden-section min-h-screen p-6 pt-32">
+        <div class="max-w-xl mx-auto glass-premium p-10 md:p-14">
+            <h2 class="text-2xl font-bold mb-10 tracking-tight">SESSION <span class="text-[#ff0055]">CONFIG.</span></h2>
+            <div class="space-y-8">
+                <div class="group">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">Visual Presence</label>
+                    <input type="file" id="fileInp" class="hidden" accept="image/*">
+                    <div onclick="document.getElementById('fileInp').click()" class="input-premium border-dashed text-center text-slate-500 cursor-pointer py-12" id="fileName">
+                        <span class="text-2xl block mb-2">📸</span> Unggah Foto Si Dia
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">The Message</label>
+                    <textarea id="msgInp" class="input-premium h-40 resize-none" placeholder="Tuliskan perasaanmu yang paling dalam di sini..."></textarea>
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 block">Personalized Link</label>
+                    <div class="flex items-center input-premium">
+                        <span class="text-slate-500 font-bold text-[10px] uppercase mr-2 tracking-tighter">hearts.me/</span>
+                        <input type="text" id="aliasInp" class="bg-transparent border-none outline-none w-full font-bold text-pink-500" placeholder="nama-dia">
+                    </div>
+                </div>
+                <button onclick="saveProject()" class="w-full ps-btn py-6 text-xs uppercase tracking-[0.2em]">Deploy Session 🚀</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="final" class="hidden-section min-h-screen flex flex-col items-center justify-center p-6 bg-[#ffffff]">
+        <div id="final-intro" class="text-center mb-10">
+            <h2 class="romantic text-5xl md:text-6xl text-[#ff0055] mb-2">A special vow...</h2>
+            <p class="text-slate-400 text-[10px] font-black tracking-[0.5em] uppercase">Touch to decrypt</p>
+        </div>
+
+        <div class="env-scene">
+            <div class="env-wrapper" id="env-node" onclick="openEnvelope()">
+                <div class="env-flap"></div>
+                <div class="env-base"></div>
+                <div class="letter">
+                    <img id="res-img" class="w-full h-40 md:h-48 object-cover rounded-lg mb-6 shadow-lg">
+                    <div class="max-h-48 overflow-y-auto custom-scroll">
+                        <p id="res-msg" class="romantic text-3xl text-center text-[#111] leading-tight"></p>
+                    </div>
+                    <div id="res-actions" class="hidden mt-10 flex flex-col items-center">
+                        <p class="text-[9px] font-black text-slate-400 mb-6 tracking-[0.3em] uppercase">Confirm Your Decision</p>
+                        <div class="flex gap-4">
+                            <button onclick="accept(event)" class="bg-[#ff0055] text-white px-8 md:px-12 py-4 rounded-full font-bold text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition">Yes, I Do!</button>
+                            <button id="no-btn" onmouseover="dodgeNo()" ontouchstart="dodgeNo()" class="bg-slate-100 text-slate-400 px-8 md:px-12 py-4 rounded-full font-bold text-[10px] uppercase tracking-widest">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="fixed bottom-8 w-full text-center">
+            <p class="text-pink-100 font-black text-[9px] tracking-[0.6em] uppercase">BY KENZZIE GANTENG BANGET</p>
+        </footer>
+    </section>
+
+    <script>
+        AOS.init();
+        let store = { img: '', msg: '', mode: '', alias: '' };
+
+        // AUTO-DETECT SYSTEM
+        const detectDevice = () => {
+            const indicator = document.getElementById('device-indicator');
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            indicator.innerText = `System: ${isMobile ? 'Mobile Optimized' : 'Desktop Interface'}`;
+            return isMobile;
+        };
+
+        function nav(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden-section'));
+            const el = document.getElementById(id);
+            el.classList.remove('hidden-section');
+            gsap.fromTo(el, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: "power4.out" });
+        }
+
+        function initEditor(mode) { store.mode = mode; nav('editor'); }
+
+        document.getElementById('fileInp').onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (r) => {
+                store.img = r.target.result;
+                document.getElementById('fileName').innerHTML = "Visual Asset Ready ✓";
+                document.getElementById('fileName').classList.add('text-pink-500', 'font-bold');
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        async function saveProject() {
+            store.msg = document.getElementById('msgInp').value;
+            const alias = document.getElementById('aliasInp').value.replace(/\s+/g, '-').toLowerCase();
+            store.alias = alias || 'session-' + Date.now();
+            
+            if(!store.img || !store.msg) return alert("Lengkapi semua aset dulu, Bree!");
+
+            localStorage.setItem(store.alias, JSON.stringify(store));
+            const finalURL = window.location.origin + window.location.pathname + '#' + store.alias;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: 'Hearts to Hearts', text: 'Seseorang mengirimkan janji spesial untukmu...', url: finalURL });
+                } catch (err) { copyTo(finalURL); }
+            } else { copyTo(finalURL); }
+        }
+
+        function copyTo(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Link berhasil disalin ke clipboard!");
+                location.reload();
+            });
+        }
+
+        function openEnvelope() {
+            const node = document.getElementById('env-node');
+            if(node.classList.contains('env-open')) return;
+            
+            node.classList.add('env-open');
+            gsap.to("#final-intro", { opacity: 0, y: -20, duration: 0.5 });
+            
+            if(store.mode === 'confess') {
+                setTimeout(() => {
+                    document.getElementById('res-actions').classList.remove('hidden');
+                    gsap.from("#res-actions", { opacity: 0, y: 20, duration: 1, delay: 0.5 });
+                }, 800);
+            }
+        }
+
+        function dodgeNo() {
+            const btn = document.getElementById('no-btn');
+            const range = detectDevice() ? 300 : 500;
+            gsap.to(btn, {
+                x: (Math.random() - 0.5) * range,
+                y: (Math.random() - 0.5) * range,
+                duration: 0.2,
+                ease: "power2.out"
+            });
+        }
+
+        function accept(e) {
+            e.stopPropagation();
+            confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 }, colors: ['#ff0055', '#ffffff'] });
+            setTimeout(() => {
+                window.open(`https://wa.me/?text=Aku%20sudah%20membaca%20pesannya...%20and%20it's%20a%20YES!%20❤️`);
+            }, 2000);
+        }
+
+        window.onload = () => {
+            detectDevice();
+            if(window.location.hash) {
+                const data = JSON.parse(localStorage.getItem(window.location.hash.substring(1)));
+                if(data) {
+                    store = data;
+                    document.getElementById('res-img').src = data.img;
+                    document.getElementById('res-msg').innerText = data.msg;
+                    nav('final');
+                }
+            }
+        };
+    </script>
+</body>
+</html>
